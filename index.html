@@ -1,0 +1,1309 @@
+<title>Narabadee Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout concept: developer portfolio, dark-first. Sticky top bar with command palette, hero with network canvas and a code window built from the profile, outlined cards, a floating AI assistant. */
+:root {
+  --bg: #0A1112;
+  --bg-2: #0E1819;
+  --card: #111C1D;
+  --line: #1F3032;
+  --fg: #E6F1EF;
+  --muted: #8FA6A3;
+  --accent: #2EE6A6;
+  --accent-ink: #04120D;
+  --accent-soft: #123A32;
+  --code-bg: #0C1617;
+  --c-key: #6EC1FF;
+  --c-str: #2EE6A6;
+  --c-bool: #FFB86B;
+  --warn: #FFB86B;
+  --sans: "IBM Plex Sans Thai", "Noto Sans Thai", "Sarabun", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F4F8F7; --bg-2: #EAF2F0; --card: #FFFFFF; --line: #D3E1DE; --fg: #0C1B1A; --muted: #506563;
+    --accent: #0A8F68; --accent-ink: #FFFFFF; --accent-soft: #D6F3E9;
+    --code-bg: #F8FBFA; --c-key: #1565C0; --c-str: #0A7A58; --c-bool: #B25E00; --warn: #B25E00;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F4F8F7; --bg-2: #EAF2F0; --card: #FFFFFF; --line: #D3E1DE; --fg: #0C1B1A; --muted: #506563;
+  --accent: #0A8F68; --accent-ink: #FFFFFF; --accent-soft: #D6F3E9;
+  --code-bg: #F8FBFA; --c-key: #1565C0; --c-str: #0A7A58; --c-bool: #B25E00; --warn: #B25E00;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  background: var(--bg); color: var(--fg); overflow-x: clip;
+  font-family: var(--sans); font-size: 16px; line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 30; }
+a { color: inherit; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 1080px; margin-inline: auto; }
+.mono { font-family: var(--mono); }
+
+/* Top bar */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding-inline: max(16px, env(safe-area-inset-left, 0px));
+}
+.prog { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--accent); }
+.top-in { max-width: 1080px; margin-inline: auto; display: flex; align-items: center; gap: 16px; min-height: 58px; }
+.logo { font-family: var(--mono); font-weight: 700; letter-spacing: .04em; text-decoration: none; white-space: nowrap; display: flex; gap: 10px; align-items: center; }
+.logo b { color: var(--accent); }
+nav.menu { flex: 1; min-width: 0; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
+nav.menu::-webkit-scrollbar { display: none; }
+nav.menu a { text-decoration: none; padding: 17px 14px 15px; font-size: 14px; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; }
+nav.menu a:hover { color: var(--fg); }
+nav.menu a.on { color: var(--accent); border-bottom-color: var(--accent); }
+.tools { display: flex; gap: 8px; flex: none; }
+.ibtn { font: inherit; font-size: 13px; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 4px 12px; text-decoration: none; cursor: pointer; line-height: 1.6; }
+.ibtn:hover { border-color: var(--accent); color: var(--accent); }
+.ibtn kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 6px; }
+
+/* Hero */
+.hero { position: relative; isolation: isolate; padding-block: 72px 80px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+.hero::before { content: ""; position: absolute; inset: 0 calc(-50vw + 50%); z-index: -2; background: radial-gradient(60% 90% at 85% 10%, var(--accent-soft), transparent 70%); }
+#net { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .6; pointer-events: none; }
+.hero > :not(canvas) { min-width: 0; }
+.hi { color: var(--accent); font-size: 1.15rem; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.8rem); line-height: 1.15; letter-spacing: .01em; text-transform: uppercase; font-weight: 700; color: var(--accent); margin-top: 6px; overflow-wrap: anywhere; }
+.hero h2.role { font-size: clamp(1.4rem, 3vw, 1.9rem); margin-top: 10px; line-height: 1.4; }
+.tagline { margin-top: 16px; font-size: 1.05rem; color: var(--accent); max-width: 40ch; }
+.learn { margin-top: 14px; font-family: var(--mono); font-size: 14px; color: var(--muted); }
+.learn b { color: var(--fg); font-weight: 500; }
+.caret { display: inline-block; width: 8px; height: 1.1em; background: var(--accent); vertical-align: text-bottom; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.feats { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 20px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
+.feats li::before { content: "◇ "; color: var(--accent); }
+.cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+.btn { font: inherit; font-size: 15px; font-weight: 500; text-decoration: none; padding: 9px 22px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; display: inline-block; }
+.btn.fill { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn:hover { border-color: var(--accent); }
+.btn.fill:hover { filter: brightness(1.08); }
+.btn.sm { padding: 3px 16px; font-size: 14px; }
+
+.code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-family: var(--mono); font-size: 13.5px; line-height: 1.9; }
+.code-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.code-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: inline-block; }
+.code-bar span { margin-left: 8px; }
+.code pre { margin: 0; padding: 16px 20px 20px; overflow-x: auto; font: inherit; color: var(--fg); }
+.k { color: var(--c-key); } .s { color: var(--c-str); } .b { color: var(--c-bool); } .p { color: var(--muted); }
+
+/* Sections */
+section { padding-block: 64px; border-top: 1px solid var(--line); }
+.eyebrow { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+.sec-h { margin-bottom: 32px; display: flex; flex-direction: column; gap: 4px; }
+.sec-h h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.35; }
+.sec-h p { color: var(--muted); max-width: 60ch; }
+.glow { position: relative; }
+.glow::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .2s; background: radial-gradient(220px circle at var(--mx, 50%) var(--my, -50%), var(--accent-soft), transparent 70%); }
+.glow:hover::after { opacity: .7; }
+
+/* About */
+.about { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: center; }
+.about > * { min-width: 0; }
+.about .lead { font-size: 1.1rem; max-width: 56ch; }
+.info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px 28px; margin-top: 28px; }
+.info dt { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.info dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.photo { aspect-ratio: 4 / 5; max-width: 340px; width: 100%; justify-self: center; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.photo b { font-family: var(--mono); font-size: clamp(3rem, 9vw, 5rem); color: var(--accent); letter-spacing: .04em; }
+.photo small { position: absolute; left: 14px; bottom: 10px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+/* Tech stack */
+.stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.tile { border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 20px 12px 16px; text-align: center; min-width: 0; }
+.tile:hover { border-color: var(--accent); }
+.mono-badge { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 1.1rem; }
+.tile b { display: block; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.tile small { color: var(--muted); font-size: 13px; }
+
+/* Projects */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; }
+.card { border: 1px solid var(--line); background: var(--card); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer; }
+.card:hover { border-color: var(--accent); }
+.cover { aspect-ratio: 16 / 9; max-width: 100%; background: var(--code-bg); border-bottom: 1px solid var(--line); position: relative; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.cover i { display: block; height: 8px; border-radius: 4px; background: var(--line); }
+.cover i.a { background: var(--accent); width: 38%; }
+.cover i.w1 { width: 80%; } .cover i.w2 { width: 62%; } .cover i.w3 { width: 72%; }
+.cover .row { display: flex; gap: 8px; margin-top: auto; }
+.cover .row i { flex: 1; height: 34px; border-radius: 6px; }
+.cover .dots { display: flex; gap: 5px; } .cover .dots i { width: 7px; height: 7px; border-radius: 50%; }
+.cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cb { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.cb h3 { font-size: 1.1rem; line-height: 1.45; }
+.cb p { color: var(--muted); font-size: 15px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: auto 0 0; padding: 4px 0 0; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg-2); color: var(--fg); }
+.chip.ok { border-color: var(--accent); color: var(--accent); }
+.chip.miss { border-style: dashed; color: var(--muted); }
+.more { color: var(--accent); font-size: 14px; font-weight: 500; }
+
+/* Skills */
+.skills { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: start; }
+.skills > * { min-width: 0; }
+.panel { border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 24px; min-width: 0; }
+.panel h3 { font-size: 1.05rem; margin-bottom: 16px; }
+.sk + .sk { margin-top: 18px; }
+.sk-top { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; }
+.sk-top span:last-child { font-family: var(--mono); color: var(--muted); font-size: 13px; flex: none; }
+.track { height: 8px; background: var(--bg-2); border-radius: 4px; margin-top: 6px; overflow: hidden; border: 1px solid var(--line); }
+.track i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.tools-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+.tools-grid span { display: flex; align-items: center; gap: 10px; font-size: 14.5px; min-width: 0; overflow-wrap: anywhere; }
+.tools-grid em { font-style: normal; width: 28px; height: 28px; flex: none; border-radius: 7px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 11px; }
+
+/* AI job match */
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+.match textarea { width: 100%; min-height: 190px; resize: vertical; background: var(--bg-2); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font: inherit; font-size: 15px; line-height: 1.6; }
+.match textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.match .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.note { color: var(--muted); font-size: 13px; margin-top: 12px; }
+.res-top { display: flex; gap: 20px; align-items: center; }
+.ring { --p: 0; width: 96px; height: 96px; flex: none; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--line) 0); display: grid; place-items: center; }
+.ring span { width: 74px; height: 74px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 1.3rem; color: var(--accent); }
+.verdict { font-weight: 600; font-size: 1.1rem; line-height: 1.5; }
+.res h4 { margin: 18px 0 8px; font-size: 14px; color: var(--muted); font-weight: 500; }
+.res .chips { margin: 0; padding: 0; }
+
+/* Education / certificates */
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: start; }
+.two > * { min-width: 0; }
+.entry + .entry { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+.entry .when { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.entry h4 { margin: 2px 0 0; font-size: 1.05rem; font-weight: 600; line-height: 1.5; }
+.entry p { color: var(--muted); font-size: 15px; }
+.entry ul { margin: 10px 0 0; padding-left: 20px; color: var(--fg); font-size: 15px; line-height: 1.8; }
+.entry li::marker { color: var(--accent); }
+.badge { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px dashed var(--accent); border-radius: 4px; padding: 0 8px; margin-left: 8px; font-weight: 400; vertical-align: middle; }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.contact .panel { display: flex; flex-direction: column; gap: 4px; }
+.contact .lbl { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.contact .val { font-size: 1.1rem; font-weight: 500; overflow-wrap: anywhere; user-select: all; }
+.contact .btn { align-self: flex-start; margin-top: 10px; }
+footer { border-top: 1px solid var(--line); padding-block: 24px 40px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; color: var(--muted); font-size: 14px; }
+
+/* Dialogs */
+dialog { background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 14px; padding: 28px; width: min(680px, calc(100% - 32px)); max-height: calc(100% - 48px); overflow-y: auto; }
+dialog::backdrop { background: rgba(0, 0, 0, .65); }
+dialog h3 { font-size: 1.5rem; line-height: 1.4; }
+dialog .d { color: var(--muted); margin-top: 8px; }
+dialog h4 { margin: 24px 0 8px; font-size: 1rem; }
+dialog ul.feat { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+dialog ul.feat li::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+dialog .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+dialog .x { position: absolute; top: 12px; right: 12px; }
+dialog.pal { padding: 0; margin: 12vh auto auto; width: min(560px, calc(100% - 32px)); overflow: hidden; }
+.pal input { width: 100%; background: transparent; color: var(--fg); border: 0; border-bottom: 1px solid var(--line); padding: 16px 20px; font: inherit; font-size: 16px; outline: none; }
+.pal ul { list-style: none; margin: 0; padding: 8px; max-height: 50vh; overflow-y: auto; }
+.pal li { padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; font-size: 15px; }
+.pal li small { font-family: var(--mono); color: var(--muted); font-size: 12px; flex: none; }
+.pal li.on { background: var(--accent-soft); color: var(--accent); }
+
+/* Language switch */
+#langBtn { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; }
+#langBtn [data-l] { opacity: .5; }
+html[lang="th"] #langBtn [data-l="th"], html[lang="en"] #langBtn [data-l="en"] { opacity: 1; color: var(--accent); font-weight: 700; }
+/* Lamp theme switch */
+.lamp { position: relative; width: 30px; height: 34px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--fg); flex: none; -webkit-tap-highlight-color: transparent; }
+.lamp svg { position: absolute; left: 0; top: -12px; width: 30px; height: 48px; overflow: visible; transform-origin: 50% 0; }
+.lamp .shade { fill: var(--accent); stroke: var(--line); stroke-width: 1; }
+.lamp .stem, .lamp .cord-line { stroke: var(--muted); stroke-width: 1.4; stroke-linecap: round; fill: none; }
+.lamp .bead { fill: var(--accent); stroke: var(--bg); stroke-width: 1; }
+.lamp .bulb { fill: #5b4d24; transition: fill .3s; }
+.lamp .halo { fill: #FFD84A; opacity: 0; transition: opacity .3s; }
+:root[data-theme="light"] .lamp .bulb { fill: #FFD84A; }
+:root[data-theme="light"] .lamp .halo { opacity: .45; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .lamp .bulb { fill: #FFD84A; }
+  :root:not([data-theme="dark"]) .lamp .halo { opacity: .45; }
+}
+.lamp:hover .bead { fill: var(--fg); }
+.lamp:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 8px; }
+.lamp.pull svg { animation: lampSwing .8s ease-out; }
+.lamp.pull .cord { animation: cordPull .45s ease-out; }
+@keyframes cordPull { 0% { transform: translateY(0); } 35% { transform: translateY(9px); } 100% { transform: translateY(0); } }
+@keyframes lampSwing { 0% { transform: rotate(0); } 25% { transform: rotate(5deg); } 55% { transform: rotate(-3deg); } 80% { transform: rotate(1.5deg); } 100% { transform: rotate(0); } }
+@media (prefers-reduced-motion: reduce) { .lamp.pull svg, .lamp.pull .cord { animation: none; } }
+/* Intro 3D */
+#intro { position: fixed; inset: 0; z-index: 200; background: radial-gradient(70% 60% at 50% 40%, var(--accent-soft), var(--bg) 75%); display: flex; align-items: center; justify-content: center; transition: opacity .6s ease; overflow: hidden; }
+#intro.out { opacity: 0; pointer-events: none; }
+#intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#intro .it { position: absolute; left: 0; right: 0; bottom: max(120px, 20%); text-align: center; padding: 0 20px; pointer-events: none; }
+#intro .it .hi { font-family: var(--mono); color: var(--accent); font-size: 14px; min-height: 1.4em; }
+#intro .it h1 { font-size: clamp(1.8rem, 6vw, 3.2rem); line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: .01em; min-height: 1.2em; margin-top: 4px; }
+#intro .it p.sub { color: var(--muted); margin-top: 6px; min-height: 1.5em; }
+#intro .enter { position: absolute; left: 50%; bottom: max(48px, 7%); transform: translateX(-50%); opacity: 0; pointer-events: none; transition: opacity .5s; font: inherit; font-weight: 600; background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 999px; padding: 12px 28px; cursor: pointer; box-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+#intro .enter.show { opacity: 1; pointer-events: auto; }
+#intro .enter:focus-visible, #intro .skip:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+#intro .skip { position: absolute; top: max(16px, env(safe-area-inset-top, 0px)); right: 16px; font: inherit; font-size: 13px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px; cursor: pointer; }
+#intro .skip:hover { color: var(--accent); border-color: var(--accent); }
+#intro .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); }
+#intro .bar i { display: block; height: 100%; width: 0; background: var(--accent); }
+/* Role presets (AI Match) */
+.roles { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.roles .sugb[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+/* 3D robot */
+.hero-r { display: grid; gap: 16px; min-width: 0; }
+.robot { position: relative; height: 300px; border-radius: 14px; cursor: pointer; touch-action: pan-y; }
+.robot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.robot canvas { width: 100%; height: 100%; display: block; }
+.robot .bubble { position: absolute; top: 6px; right: 6%; max-width: 62%; background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 12px 12px 12px 3px; padding: 8px 12px; font-size: 13px; line-height: 1.5; pointer-events: none; transition: opacity .3s; }
+.robot[data-ready="0"] { display: none; }
+@media (max-width: 860px) { .robot { height: 260px; } }
+/* AI assistant */
+.chat[hidden] { display: none; }
+.fab { position: fixed; z-index: 50; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 999px; padding: 10px 20px; font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+.fab:hover { filter: brightness(1.08); }
+.chat { position: fixed; z-index: 50; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(72px + env(safe-area-inset-bottom, 0px)); width: min(390px, calc(100% - 32px)); height: min(540px, calc(100% - 160px)); background: var(--card); border: 1px solid var(--line); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 12px 40px rgba(0, 0, 0, .4); }
+.chat-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.chat-h b { font-weight: 600; line-height: 1.4; }
+.chat-h small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+.msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 88%; padding: 8px 14px; border-radius: 12px; font-size: 14.5px; line-height: 1.65; overflow-wrap: anywhere; }
+.msg.bot { background: var(--bg-2); border: 1px solid var(--line); align-self: flex-start; }
+.msg.user { background: var(--accent); color: var(--accent-ink); align-self: flex-end; }
+.msg .sug { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sugb { font: inherit; font-size: 13px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 999px; padding: 0 12px; cursor: pointer; }
+.sugb:hover { background: var(--accent-soft); }
+.quick { display: flex; gap: 6px; padding: 0 16px 10px; overflow-x: auto; scrollbar-width: none; }
+.quick::-webkit-scrollbar { display: none; }
+.quick .sugb { white-space: nowrap; color: var(--fg); border-color: var(--line); }
+.chat form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.chat input { flex: 1; min-width: 0; background: var(--bg-2); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 15px; }
+.chat input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.chat .foot { padding: 0 16px 10px; color: var(--muted); font-size: 12px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-block: 40px 56px; gap: 36px; }
+  .about, .skills, .match { grid-template-columns: 1fr; gap: 32px; }
+  nav.menu { justify-content: flex-start; }
+  .logo span, .ibtn kbd { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .caret { animation: none; } }
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="#top"><b>&lt;/&gt;</b><span id="logoName"></span></a>
+    <nav class="menu" id="menu" aria-label="เมนูหลัก" data-en-aria-label="Main menu">
+      <a href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#match">AI Match</a>
+      <a href="#experience">Experience</a>
+      <a href="#background">Education</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="tools">
+      <a class="ibtn" id="ghLink" href="#" target="_blank" rel="noopener" hidden>GitHub</a>
+      <button class="ibtn" id="palBtn" type="button" aria-label="เปิดคำสั่งลัด" data-en-aria-label="Open command palette"><span data-en="Search">ค้นหา</span><kbd>Ctrl K</kbd></button>
+      <button class="ibtn" id="langBtn" type="button" aria-label="เปลี่ยนภาษา" data-en-aria-label="Change language"><span data-l="th">TH</span> / <span data-l="en">EN</span></button>
+      <button class="lamp" id="themeBtn" type="button" aria-label="สลับโหมดสี สว่าง/มืด (ดึงเชือกโคมไฟ)" title="ดึงเชือกเพื่อเปลี่ยนสี" data-en-aria-label="Toggle light/dark mode (pull the lamp cord)" data-en-title="Pull the cord to change theme">
+        <svg viewBox="0 0 40 64" aria-hidden="true" focusable="false">
+          <line class="stem" x1="20" y1="0" x2="20" y2="10"/>
+          <circle class="halo" cx="20" cy="31" r="15"/>
+          <path class="shade" d="M5 30 Q5 11 20 10 Q35 11 35 30 Z"/>
+          <ellipse class="bulb" cx="20" cy="31" rx="6" ry="3.5"/>
+          <g class="cord"><line class="cord-line" x1="29" y1="29" x2="29" y2="53"/><circle class="bead" cx="29" cy="55" r="3"/></g>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <i class="prog" id="prog"></i>
+</header>
+
+<main class="wrap" id="top">
+  <div class="hero" id="hero">
+    <canvas id="net" aria-hidden="true"></canvas>
+    <div>
+      <p class="hi mono">Hi, I'm</p>
+      <h1 id="name"></h1>
+      <h2 class="role" id="role"></h2>
+      <p class="tagline" id="tagline"></p>
+      <p class="learn mono"><span data-en="Currently learning:">กำลังเรียนรู้:</span> <b id="typed"></b><span class="caret" aria-hidden="true"></span></p>
+      <ul class="feats" id="feats"></ul>
+      <div class="cta">
+        <a class="btn fill" href="#projects">View My Projects →</a>
+        <a class="btn" href="#match" data-en="Try AI Job Match">ลอง AI Job Match</a>
+      </div>
+    </div>
+    <div class="hero-r">
+      <div class="robot" id="robot" data-ready="0" role="button" tabindex="0" aria-label="หุ่นยนต์ 3 มิติ กดเพื่อคุยกับผู้ช่วย AI" data-en-aria-label="3D robot. Click to chat with the AI assistant">
+        <p class="bubble" id="robotBubble" data-en="Hi! Click me to chat with the AI assistant">สวัสดีครับ! กดที่ผมเพื่อคุยกับผู้ช่วย AI</p>
+      </div>
+      <div class="code" aria-label="ข้อมูลโดยย่อในรูปแบบโค้ด" data-en-aria-label="Quick profile shown as code">
+        <div class="code-bar"><i></i><i></i><i></i><span>developer.js</span></div>
+        <pre id="codeBox"></pre>
+      </div>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="sec-h"><span class="eyebrow">// about</span><h2>About Me</h2></div>
+    <div class="about">
+      <div>
+        <p class="lead" id="aboutText"></p>
+        <dl class="info" id="info"></dl>
+      </div>
+      <div class="photo" id="photo"></div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="sec-h"><span class="eyebrow">// tech stack</span><h2>Tech Stack</h2><p data-en="Tools and technologies used in my projects">เครื่องมือและเทคโนโลยีที่ใช้งานในโปรเจกต์</p></div>
+    <div class="stack" id="stackList"></div>
+  </section>
+
+  <section id="projects">
+    <div class="sec-h"><span class="eyebrow">// projects</span><h2>My Projects</h2><p data-en="Click a card for details, or ask the AI assistant (bottom right) which project fits what you are looking for">กดที่การ์ดเพื่อดูรายละเอียด หรือถามผู้ช่วย AI มุมขวาล่างว่าโปรเจกต์ไหนตรงกับสิ่งที่คุณหา</p></div>
+    <div class="cards" id="cardList"></div>
+  </section>
+
+  <section id="skills">
+    <div class="sec-h"><span class="eyebrow">// skills</span><h2>Skills &amp; Tools</h2><p data-en="Levels estimated from work I have actually done">ระดับที่ประเมินจากงานที่ลงมือทำเอง</p></div>
+    <div class="skills">
+      <div class="panel glow"><h3 data-en="Core skills">ความสามารถหลัก</h3><div id="bars"></div></div>
+      <div class="panel glow"><h3 data-en="Other tools">เครื่องมืออื่นๆ</h3><div class="tools-grid" id="otherTools"></div></div>
+    </div>
+  </section>
+
+  <section id="match">
+    <div class="sec-h"><span class="eyebrow">// ai match</span><h2>AI Job Match</h2><p><span data-en="Paste a job description or position. The system compares it with the skills of">วางรายละเอียดงานหรือตำแหน่งที่รับสมัคร ระบบจะเทียบกับทักษะของ</span> <span id="matchName"></span> <span data-en="and suggests related projects.">และแนะนำโปรเจกต์ที่เกี่ยวข้อง</span></p></div>
+    <div class="match">
+      <div class="panel">
+        <p class="mono" style="font-size:12px;color:var(--muted);margin:0" data-en="Pick a career to compare with the skills">เลือกอาชีพเพื่อเทียบกับทักษะ</p>
+        <div class="roles" id="roles" role="group" aria-label="เลือกอาชีพตัวอย่าง" data-en-aria-label="Sample careers"></div>
+        <label for="jd" class="mono" style="font-size:12px;color:var(--muted)" data-en="Paste a job description">วางรายละเอียดงาน (Job Description)</label>
+        <textarea id="jd" spellcheck="false"></textarea>
+        <div class="actions">
+          <button class="btn fill sm" id="jdRun" type="button" data-en="Analyze">วิเคราะห์</button>
+          <button class="btn sm" id="jdEx" type="button" data-en="Use sample text">ใช้ข้อความตัวอย่าง</button>
+          <button class="btn sm" id="jdClear" type="button" data-en="Clear">ล้าง</button>
+        </div>
+        <p class="note" data-en="Calculated in your browser; nothing is sent anywhere. It compares technology names found in the text, so it is only a rough estimate.">คำนวณในเบราว์เซอร์ ไม่ส่งข้อความออกไปที่ไหน เทียบจากชื่อเทคโนโลยีที่พบในข้อความ จึงเป็นการประเมินคร่าวๆ</p>
+      </div>
+      <div class="panel res" id="jdRes" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="sec-h"><span class="eyebrow">// experience</span><h2>Internship &amp; Experience</h2></div>
+    <div class="panel"><h3 data-en="Internship experience">ประสบการณ์ฝึกงาน</h3><div id="workList"></div></div>
+  </section>
+
+  <section id="background">
+    <div class="sec-h"><span class="eyebrow">// background</span><h2>Education &amp; Certificates</h2></div>
+    <div class="two">
+      <div class="panel"><h3 data-en="Education">การศึกษา</h3><div id="eduList"></div></div>
+      <div class="panel"><h3 data-en="Certificates &amp; training">ใบรับรองและการอบรม</h3><div id="certList"></div></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="sec-h"><span class="eyebrow">// contact</span><h2>Contact</h2><p data-en="Interested in working together or want to talk about a project? Reach me here.">สนใจร่วมงานหรืออยากคุยเรื่องโปรเจกต์ ติดต่อได้ตามช่องทางนี้</p></div>
+    <div class="contact" id="contactList"></div>
+  </section>
+
+  <footer><span id="foot"></span><span class="mono">ICT · Sripatum University</span></footer>
+</main>
+
+<button class="fab" id="fab" type="button" aria-expanded="false" aria-controls="chat" data-en="✦ Ask AI">✦ ถาม AI</button>
+<section class="chat" id="chat" hidden aria-label="ผู้ช่วย AI" data-en-aria-label="AI assistant">
+  <div class="chat-h">
+    <b>AI Assistant<small id="chatSub"></small></b>
+    <button class="ibtn" id="chatX" type="button" data-en="Close">ปิด</button>
+  </div>
+  <div class="msgs" id="msgs" role="log" aria-live="polite"></div>
+  <div class="quick" id="quick"></div>
+  <form id="chatForm" autocomplete="off">
+    <input id="chatIn" type="text" maxlength="300" placeholder="พิมพ์คำถาม เช่น อยากได้เว็บที่มีระบบสมาชิก" aria-label="คำถาม" data-en-placeholder="Type a question, e.g. I need a site with user accounts" data-en-aria-label="Question">
+    <button class="btn fill sm" type="submit" data-en="Send">ส่ง</button>
+  </form>
+  <p class="foot" id="chatFoot"></p>
+</section>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <button class="ibtn x" id="dlgClose" type="button" data-en="Close">ปิด</button>
+  <h3 id="dlgTitle"></h3>
+  <p class="d" id="dlgDesc"></p>
+  <h4 data-en="Key features">ฟีเจอร์หลัก</h4>
+  <ul class="feat" id="dlgFeat"></ul>
+  <h4 data-en="Technologies">เทคโนโลยี</h4>
+  <ul class="chips" id="dlgTech" style="margin:0;padding:0"></ul>
+  <div class="links" id="dlgLinks"></div>
+</dialog>
+
+<dialog class="pal" id="pal" aria-label="คำสั่งลัด" data-en-aria-label="Command palette">
+  <input id="palIn" type="text" placeholder="พิมพ์เพื่อค้นหา เช่น projects, theme, email" aria-label="ค้นหาคำสั่ง" data-en-placeholder="Type to search, e.g. projects, theme, email" data-en-aria-label="Search commands">
+  <ul id="palList" role="listbox"></ul>
+</dialog>
+
+<script>
+/* ===== แก้ข้อมูลทั้งหมดของคุณตรงนี้ที่เดียว ===== */
+const PROFILE = {
+  name: "Narabadee Soonjan",
+  nameTh: "นรบดี สุ่นจันทร์",
+  role: "นักศึกษา หลักสูตรเทียบโอน 2 ปี",
+  tagline: "ผมคือนักพัฒนาเว็บแอปพลิเคชัน ที่ชอบเขียนโค้ดและสร้างสิ่งที่ใช้งานได้จริง",
+  features: ["Web Application", "API & Database", "Clean Code", "Problem Solving"],
+  learning: ["TypeScript", "Docker", "AI APIs"],   // ข้อความที่พิมพ์วนในหน้าแรก
+  about: "ผมเป็นนักศึกษา ICT ที่ชอบพัฒนาเว็บแอปพลิเคชันทั้ง Frontend และ Backend โดยใช้เทคโนโลยีสมัยใหม่ ชอบเรียนรู้สิ่งใหม่ๆ และพร้อมพัฒนาตัวเองอยู่เสมอ",
+  location: "Thailand",
+  experience: "ฝึกงาน IT Support 4 เดือน + โปรเจกต์ส่วนตัว",
+  email: "narabadee@example.com",         // เปลี่ยนเป็นอีเมลจริง
+  phone: "+66 80 123 4567",                // เปลี่ยนเป็นเบอร์จริง
+  github: "https://github.com/Narabadeeb",
+  photo: "data:image/jpeg;base64,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",   // รูปฝังในไฟล์แล้ว (เปลี่ยนเป็น path เช่น me.jpg ได้)
+  aiEndpoint: "",                          // ใส่ URL ของ Cloudflare Worker (ไฟล์ ai-worker.js) เพื่อให้ผู้ช่วยตอบด้วย AI จริง ว่างไว้ = ใช้ตัวช่วยในเบราว์เซอร์
+  /* ทักษะที่ใช้ในฟีเจอร์ AI Match และผู้ช่วย ต้องตรงกับที่ทำได้จริง */
+  skillKeys: ["React", "JavaScript", "HTML", "CSS", "Node.js", "Express", "Supabase", "MySQL", "SQL", "REST API", "Git", "Vercel", "Figma", "Postman", "Windows", "IT Support"],   // TypeScript, Docker, AI APIs อยู่ใน learning (นับครึ่งคะแนน)
+  stack: [["React", "Frontend", "Re"], ["JavaScript", "Language", "JS"], ["TypeScript", "Language", "TS"], ["HTML", "Markup", "H5"], ["CSS", "Styling", "C3"],
+          ["Node.js", "Backend", "No"], ["Express", "Framework", "Ex"], ["Supabase", "Database/Auth", "Sb"], ["MySQL", "Database", "My"], ["Git", "Version Control", "Gt"]],
+  projects: [
+    { title: "Series Finder", short: "เว็บค้นหาซีรีส์และหนัง พร้อมระบบสมาชิกและบันทึกรายการโปรด",
+      desc: "เว็บค้นหาซีรีส์และหนังจากฐานข้อมูล TMDB ผู้ใช้สมัครสมาชิก ค้นหา และจัดการรายการโปรดของตัวเองได้",
+      features: ["ระบบสมัครสมาชิกและเข้าสู่ระบบ (Supabase Auth)", "ค้นหาซีรีส์/หนังจาก TMDB API", "บันทึกรายการโปรดต่อผู้ใช้", "รองรับการใช้งานบนมือถือ (Responsive)"],
+      tech: ["React", "Supabase", "TMDB"], tags: ["ค้นหา", "หนัง", "ซีรีส์", "ซีรีย์", "movie", "series", "api", "favorite", "รายการโปรด", "สมาชิก", "login"],
+      demo: "", repo: "", cover: "" },
+    { title: "ระบบสมาชิก (Authentication)", short: "ระบบสมัครสมาชิกและเข้าสู่ระบบ ด้วย Supabase พร้อมจัดการข้อมูลผู้ใช้",
+      desc: "ระบบยืนยันตัวตนที่ใช้ซ้ำได้ในหลายโปรเจกต์ ครอบคลุมการสมัคร เข้าสู่ระบบ และดูข้อมูลโปรไฟล์",
+      features: ["สมัครสมาชิกและเข้าสู่ระบบ", "จัดการเซสชันของผู้ใช้", "จำกัดสิทธิ์การเข้าถึงข้อมูลรายผู้ใช้"],
+      tech: ["React", "Supabase"], tags: ["สมาชิก", "login", "เข้าสู่ระบบ", "auth", "สมัคร", "ยืนยันตัวตน", "ผู้ใช้", "user", "สิทธิ์"],
+      demo: "", repo: "", cover: "" },
+    { title: "Task Manager", short: "แอปจัดการงานแบบเรียลไทม์ พร้อมระบบฐานข้อมูล",
+      desc: "แอปจดและติดตามงานประจำวัน เพิ่ม แก้ไข ลบ และกรองตามสถานะได้",
+      features: ["เพิ่ม แก้ไข ลบงาน", "กรองตามสถานะ", "บันทึกข้อมูลลงฐานข้อมูล MySQL"],
+      tech: ["React", "Node.js", "MySQL"], tags: ["task", "todo", "จัดการงาน", "จดงาน", "เรียลไทม์", "crud", "ฐานข้อมูล", "database", "dashboard"],
+      demo: "", repo: "", cover: "" }
+  ],
+  bars: [["Frontend (React, JavaScript, HTML, CSS)", 90], ["Backend (Node.js, Express)", 80], ["Database (Supabase, MySQL)", 75], ["Tools (Git, VS Code, Postman)", 85]],
+  otherTools: [["Docker", "Dk"], ["Vercel", "Vc"], ["GitHub", "Gh"], ["Figma", "Fg"], ["VS Code", "VS"], ["Postman", "Pm"]],
+  work: [
+    { when: "กันยายน – ธันวาคม · ฝึกงาน ปวส. 4 เดือน", title: "IT Support (นักศึกษาฝึกงาน)", org: "ไทยยาซากิ (ผู้ผลิตสายไฟฟ้า) · พระประแดง",
+      points: ["ดูแลและแก้ปัญหาเครื่องคอมพิวเตอร์ของพนักงาน", "ติดตั้ง Windows และโปรแกรมที่ใช้งาน", "เขียนใบส่งซ่อมอุปกรณ์ IT"] }
+  ],
+  education: [
+    { when: "2567 – ปัจจุบัน", title: "ปวส. เทียบโอน 2 ปี สาขา เทคโนโลยีสารสนเทศและการสื่อสาร (ICT)", org: "มหาวิทยาลัยศรีปทุม วิทยาเขตบางเขน" },
+    { when: "ปีที่จบ", title: "ชื่อโรงเรียนมัธยมของคุณ", org: "จังหวัด" }
+  ],
+  certs: [
+    { sample: true, when: "2569", title: "ชื่อหลักสูตรหรือใบรับรอง", org: "สถาบันหรือองค์กรที่ออกให้" }
+  ],
+  /* ===== ข้อมูลภาษาอังกฤษ (แสดงเมื่อกดสลับเป็น EN) ===== */
+  en: {
+    role: "Student, 2-Year Transfer Program",
+    tagline: "I am a web application developer who loves writing code and building things that actually work.",
+    about: "I am an ICT student who enjoys building web applications, both frontend and backend, with modern technologies. I love learning new things and keep improving myself.",
+    experience: "4-month IT Support internship + personal projects",
+    projects: [
+      { title: "Series Finder", short: "Movie and series search with membership and a favorites list",
+        desc: "A search site for series and movies using the TMDB database. Users can sign up, search, and manage their own favorites.",
+        features: ["Sign-up and login (Supabase Auth)", "Search series/movies via the TMDB API", "Save favorites per user", "Responsive for mobile"] },
+      { title: "Authentication System", short: "Sign-up and login with Supabase, including user data management",
+        desc: "A reusable authentication system covering sign-up, login and viewing profile information.",
+        features: ["Sign up and log in", "User session management", "Per-user data access control"] },
+      { title: "Task Manager", short: "A real-time task management app with a database",
+        desc: "An app for noting and tracking daily tasks: add, edit, delete and filter by status.",
+        features: ["Add, edit and delete tasks", "Filter by status", "Store data in a MySQL database"] }
+    ],
+    work: [
+      { when: "September – December · 4-month internship (Pw.S.)", title: "IT Support (Intern)", org: "Thai Yazaki (electrical wire manufacturer) · Phra Pradaeng",
+        points: ["Maintained and troubleshot employees' computers", "Installed Windows and the required software", "Wrote repair request forms for IT equipment"] }
+    ],
+    education: [
+      { when: "2024 – Present", title: "Higher Vocational Certificate (Pw.S.) 2-Year Transfer Program, Information and Communication Technology (ICT)", org: "Sripatum University, Bangkhen Campus" },
+      { when: "Year of graduation", title: "Your high school name", org: "Province" }
+    ],
+    certs: [
+      { sample: true, when: "2026", title: "Course or certificate name", org: "Issuing institution" }
+    ]
+  }
+};
+/* ===== จบส่วนข้อมูล ===== */
+
+const $ = (id) => document.getElementById(id);
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const k in (props || {})) {
+    if (k === "class") n.className = props[k];
+    else if (k === "text") n.textContent = props[k];
+    else n.setAttribute(k, props[k]);
+  }
+  kids.flat().forEach((c) => c != null && n.append(c));
+  return n;
+}
+const P = PROFILE;
+// ---------- ภาษา (TH / EN) ----------
+let LANG = "th";
+try { const l = localStorage.getItem("lang"); if (l === "en" || l === "th") LANG = l; } catch (e) {}
+const L = (th, en) => (LANG === "en" ? en : th);
+const BASE = { role: P.role, tagline: P.tagline, about: P.about, experience: P.experience, work: P.work, education: P.education, certs: P.certs,
+  projects: P.projects.map((p) => ({ title: p.title, short: p.short, desc: p.desc, features: p.features })) };
+function applyData() {
+  const d = LANG === "en" && P.en ? Object.assign({}, BASE, P.en) : BASE;
+  ["role", "tagline", "about", "experience", "work", "education", "certs"].forEach((k) => { P[k] = d[k]; });
+  P.projects.forEach((p, i) => Object.assign(p, d.projects[i]));
+}
+applyData();
+function applyStatic() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-en]").forEach((n) => { if (n.dataset.th === undefined) n.dataset.th = n.textContent; n.textContent = LANG === "en" ? n.dataset.en : n.dataset.th; });
+  ["aria-label", "placeholder", "title"].forEach((a) => {
+    document.querySelectorAll("[data-en-" + a + "]").forEach((n) => {
+      if (!n.hasAttribute("data-th-" + a)) n.setAttribute("data-th-" + a, n.getAttribute(a) || "");
+      n.setAttribute(a, LANG === "en" ? n.getAttribute("data-en-" + a) : n.getAttribute("data-th-" + a));
+    });
+  });
+}
+const root = document.documentElement;
+const first = P.name.split(/\s+/)[0];
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const initials = P.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function openDlg(d) { try { d.showModal(); } catch (e) { d.setAttribute("open", ""); } }
+function closeDlg(d) { try { d.close(); } catch (e) { d.removeAttribute("open"); } }
+
+// ---------- Top bar + hero ----------
+$("logoName").textContent = first.toUpperCase();
+$("matchName").textContent = first;
+if (P.github) { const g = $("ghLink"); g.href = P.github; g.hidden = false; }
+$("name").textContent = P.name;
+function renderHero() {
+$("role").textContent = P.role;
+$("tagline").textContent = P.tagline;
+$("feats").textContent = ""; P.features.forEach((f) => $("feats").append(el("li", { text: f })));
+
+const q = (s) => el("span", { class: "s", text: '"' + s + '"' });
+const key = (s) => el("span", { class: "k", text: s });
+const punct = (s) => el("span", { class: "p", text: s });
+const stackNames = P.stack.slice(0, 4).map((s) => s[0]);
+$("codeBox").textContent = ""; $("codeBox").append(
+  el("span", { class: "b", text: "const " }), key("developer"), punct(" = {\n"),
+  "  ", key("name"), punct(": "), q(P.name), punct(",\n"),
+  "  ", key("role"), punct(": "), q(P.role), punct(",\n"),
+  "  ", key("location"), punct(": "), q(P.location), punct(",\n"),
+  "  ", key("stack"), punct(": ["), ...stackNames.flatMap((n, i) => [q(n), i < stackNames.length - 1 ? punct(", ") : ""]), punct("],\n"),
+  "  ", key("learning"), punct(": "), el("span", { class: "b", text: "true" }), punct(",\n"),
+  punct("};"));
+}
+renderHero();
+
+// Typed "learning" line
+(function typing() {
+  const t = $("typed"), words = P.learning;
+  t.textContent = words[0];
+  if (reduceMotion || words.length < 1) return;
+  let li = 0, ci = words[0].length, del = false;
+  function loop() {
+    const w = words[li];
+    if (!del) {
+      ci++; t.textContent = w.slice(0, ci);
+      if (ci >= w.length) { del = true; return setTimeout(loop, 1700); }
+      return setTimeout(loop, 90);
+    }
+    ci--; t.textContent = w.slice(0, ci);
+    if (ci <= 0) { del = false; li = (li + 1) % words.length; return setTimeout(loop, 300); }
+    setTimeout(loop, 45);
+  }
+  setTimeout(() => { ci = words[0].length; del = true; loop(); }, 2400);
+})();
+
+// Network canvas behind the hero
+(function network() {
+  const cv = $("net"), ctx = cv.getContext("2d"), hero = $("hero");
+  let w = 0, h = 0, pts = [], col = "46,230,166", frame = 0, running = false;
+  function readColor() {
+    const m = /^#([0-9a-f]{6})$/i.exec(getComputedStyle(root).getPropertyValue("--accent").trim());
+    if (m) { const n = parseInt(m[1], 16); col = [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(","); }
+  }
+  function size() {
+    const r = hero.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+    w = r.width; h = r.height; cv.width = w * d; cv.height = h * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    const n = Math.max(16, Math.min(70, Math.round(w * h / 14000)));
+    pts = Array.from({ length: n }, () => ({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3 }));
+    draw();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (const p of pts) {
+      if (running) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > w) p.vx *= -1; if (p.y < 0 || p.y > h) p.vy *= -1; }
+    }
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.hypot(dx, dy);
+        if (d < 130) { ctx.strokeStyle = "rgba(" + col + "," + ((1 - d / 130) * 0.35).toFixed(3) + ")"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
+      }
+    }
+    ctx.fillStyle = "rgba(" + col + ",.7)";
+    for (const p of pts) { ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, 6.283); ctx.fill(); }
+  }
+  function loop() { if (!running) return; if (++frame % 90 === 0) readColor(); draw(); requestAnimationFrame(loop); }
+  readColor(); size();
+  new ResizeObserver(size).observe(hero);
+  if (reduceMotion) return;
+  new IntersectionObserver((e) => {
+    const vis = e[0].isIntersecting && !document.hidden;
+    if (vis && !running) { running = true; loop(); } else if (!vis) running = false;
+  }).observe(hero);
+})();
+
+// ---------- About, stack ----------
+function renderAbout() {
+$("aboutText").textContent = P.about;
+$("info").textContent = "";
+[["Name", P.name], [L("ชื่อ (ไทย)", "Thai name"), P.nameTh], ["Location", P.location], ["Email", P.email], ["Experience", P.experience]].forEach(([k, v]) => $("info").append(el("div", null, el("dt", { text: k }), el("dd", { text: v }))));
+}
+renderAbout();
+const ph = $("photo");
+if (P.photo) ph.append(el("img", { src: P.photo, alt: P.name }));
+else ph.append(el("b", { text: initials }), el("small", { text: "ใส่รูปของคุณที่ photo ใน PROFILE" }));
+P.stack.forEach(([n, r, m]) => $("stackList").append(el("div", { class: "tile glow" }, el("div", { class: "mono-badge", text: m }), el("b", { text: n }), el("small", { text: r }))));
+
+// ---------- Projects ----------
+const dlg = $("dlg");
+function openProject(p) {
+  $("dlgTitle").textContent = p.title;
+  $("dlgDesc").textContent = p.desc;
+  $("dlgFeat").textContent = ""; p.features.forEach((f) => $("dlgFeat").append(el("li", { text: f })));
+  $("dlgTech").textContent = ""; p.tech.forEach((t) => $("dlgTech").append(el("li", { class: "chip", text: t })));
+  const links = $("dlgLinks"); links.textContent = "";
+  if (p.demo) links.append(el("a", { class: "btn fill", href: p.demo, target: "_blank", rel: "noopener", text: "View Live Demo ↗" }));
+  if (p.repo) links.append(el("a", { class: "btn", href: p.repo, target: "_blank", rel: "noopener", text: "View Source Code ↗" }));
+  openDlg(dlg);
+}
+$("dlgClose").addEventListener("click", () => closeDlg(dlg));
+dlg.addEventListener("click", (e) => { if (e.target === dlg) closeDlg(dlg); });
+function renderProjects() {
+  $("cardList").textContent = "";
+P.projects.forEach((p) => {
+  const cover = el("div", { class: "cover" },
+    el("div", { class: "dots" }, el("i"), el("i"), el("i")),
+    el("i", { class: "a" }), el("i", { class: "w1" }), el("i", { class: "w2" }), el("i", { class: "w3" }),
+    el("div", { class: "row" }, el("i"), el("i"), el("i")));
+  if (p.cover) cover.append(el("img", { src: p.cover, alt: L("หน้าปก ", "Cover of ") + p.title, loading: "lazy" }));
+  const c = el("button", { class: "card glow", type: "button" }, cover,
+    el("div", { class: "cb" }, el("h3", { text: p.title }), el("p", { text: p.short }),
+      el("ul", { class: "chips" }, p.tech.map((t) => el("li", { class: "chip", text: t }))),
+      el("span", { class: "more", text: L("ดูรายละเอียด →", "View details →") })));
+  c.addEventListener("click", () => openProject(p));
+  $("cardList").append(c);
+});
+}
+renderProjects();
+
+// ---------- Skills ----------
+function renderSkills() {
+  $("bars").textContent = "";
+P.bars.forEach(([n, v]) => $("bars").append(el("div", { class: "sk" },
+  el("div", { class: "sk-top" }, el("span", { text: n }), el("span", { text: v + "%" })),
+  el("div", { class: "track", role: "img", "aria-label": n + " " + v + L(" เปอร์เซ็นต์", " percent") }, el("i", { style: "width:" + v + "%" })))));
+}
+renderSkills();
+P.otherTools.forEach(([n, m]) => $("otherTools").append(el("span", null, el("em", { text: m }), n)));
+
+// ---------- Skill detection (shared by AI Match and assistant) ----------
+const ALIASES = {
+  "React": [/\breact(\.?js)?\b/, /รีแอค/], "JavaScript": [/javascript/, /(?<![.\w])js\b/, /\bes6\b/, /จาวาสคริปต์/], "TypeScript": [/typescript/, /\bts\b/],
+  "HTML": [/\bhtml5?\b/], "CSS": [/\bcss3?\b/, /tailwind/, /\bsass\b/, /bootstrap/], "Node.js": [/node\.?js/, /\bnode\b/], "Express": [/\bexpress(\.?js)?\b/],
+  "Supabase": [/supabase/], "MySQL": [/mysql/, /mariadb/], "SQL": [/\bsql\b/, /postgres/, /ฐานข้อมูล/, /\bdatabase\b/, /\bdb\b/], "REST API": [/\brest(ful)?\b/, /\bapi\b/, /เอพีไอ/],
+  "Git": [/\bgit\b/, /github/, /gitlab/, /version control/], "Docker": [/docker/, /container/], "Vercel": [/vercel/], "Figma": [/figma/, /ui\/ux/], "Postman": [/postman/],
+  "Windows": [/windows/, /วินโดว/], "IT Support": [/it support/, /help ?desk/, /ซัพพอร์ต/, /ดูแลคอม/, /ซ่อมคอม/, /ปัญหาด้านไอที/, /ไอทีซัพ/, /technical support/],
+  "Network": [/network/, /เครือข่าย/, /\blan\b/, /wi-?fi/, /tcp\/ip/], "Microsoft Office": [/ms office/, /microsoft office/, /\bexcel\b/, /ออฟฟิศ/],
+  "Testing": [/\btest(er|ing)?\b/, /\bqa\b/, /ทดสอบ/, /selenium/, /cypress/, /\bjest\b/], "Cisco": [/cisco/, /ccna/],
+  "AI APIs": [/openai/, /chatgpt/, /\bllm\b/, /\bai api/, /gemini/],
+  "Python": [/python/, /ไพธอน/], "Java": [/\bjava\b/, /spring/], "PHP": [/\bphp\b/, /laravel/], "Vue": [/\bvue(\.?js)?\b/], "Angular": [/angular/],
+  "MongoDB": [/mongo/], "AWS": [/\baws\b/, /amazon web/], "Linux": [/linux/], "Next.js": [/next\.?js/], "C#": [/c#/, /\.net\b/]
+};
+function detect(text) {
+  const t = text.toLowerCase();
+  return Object.keys(ALIASES).filter((k) => ALIASES[k].some((re) => re.test(t)));
+}
+const have = new Set(P.skillKeys), learning = new Set(P.learning);
+function relatedProjects(keys) {
+  return P.projects
+    .map((p) => ({ p, s: keys.filter((k) => p.tech.concat(p.tags || []).some((t) => t.toLowerCase().includes(k.toLowerCase()))).length }))
+    .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).map((x) => x.p);
+}
+
+// ---------- AI Job Match ----------
+const EXAMPLE_JD = () => L("รับสมัคร IT Support (ฝึกงาน/Junior)\nหน้าที่: ดูแลเครื่องคอมพิวเตอร์พนักงาน ติดตั้ง Windows และโปรแกรม แก้ปัญหาเครือข่ายเบื้องต้น\nคุณสมบัติ: มีพื้นฐาน HTML, CSS, JavaScript, ใช้ Git ได้\nข้อดี: เคยใช้ SQL หรือ MySQL, สนใจ Docker, Python",
+  "Hiring IT Support (Intern/Junior)\nDuties: maintain employees' computers, install Windows and software, basic network troubleshooting\nRequirements: basic HTML, CSS, JavaScript; able to use Git\nNice to have: experience with SQL or MySQL, interest in Docker, Python");
+const roleText = (r) => L("ตำแหน่ง " + r.label + "\nทักษะที่ต้องการ: " + r.keys.join(", "), "Position: " + r.label + "\nRequired skills: " + r.keys.join(", "));
+let jdKind = "custom";
+const ROLES = [
+  { id: "it", label: "IT Support", keys: ["IT Support", "Windows", "Network", "Microsoft Office", "Linux"] },
+  { id: "tester", label: "Tester (QA)", keys: ["Testing", "Postman", "REST API", "SQL", "JavaScript", "Git"] },
+  { id: "web", label: "Web Developer", keys: ["HTML", "CSS", "JavaScript", "Git", "SQL", "REST API"] },
+  { id: "front", label: "Frontend Developer", keys: ["React", "TypeScript", "JavaScript", "HTML", "CSS", "Figma", "Git"] },
+  { id: "back", label: "Backend Developer", keys: ["Node.js", "Express", "REST API", "MySQL", "SQL", "Git", "Docker"] },
+  { id: "full", label: "Full Stack Developer", keys: ["React", "Node.js", "REST API", "SQL", "Git", "Docker", "JavaScript"] },
+  { id: "net", label: "Network Engineer", keys: ["Network", "Cisco", "Linux", "Windows"] }
+];
+let currentRole = null;
+function setRole(r) {
+  currentRole = r;
+  document.querySelectorAll("#roles .sugb").forEach((b) => b.setAttribute("aria-pressed", String(!!r && b.dataset.id === r.id)));
+}
+ROLES.forEach((r) => {
+  const b = el("button", { class: "sugb", type: "button", "aria-pressed": "false", "data-id": r.id, text: r.label });
+  b.addEventListener("click", () => {
+    $("jd").value = roleText(r); jdKind = "role";
+    setRole(r); runMatch();
+  });
+  $("roles").append(b);
+});
+function runMatch() {
+  const text = $("jd").value, out = $("jdRes");
+  out.textContent = "";
+  if (!text.trim()) {
+    out.append(el("p", { class: "verdict", text: L("วางรายละเอียดงานในช่องด้านซ้าย", "Paste a job description in the box on the left") }), el("p", { class: "note", text: L("ผลจะแสดงอัตโนมัติ หรือกด Ctrl + Enter ลองกด “ใช้ข้อความตัวอย่าง” เพื่อดูตัวอย่างผลลัพธ์", "Results appear automatically, or press Ctrl + Enter. Try “Use sample text” to see an example result.") }));
+    return;
+  }
+  const req = detect(text);
+  if (!req.length) {
+    out.append(el("p", { class: "verdict", text: L("ยังไม่พบชื่อเทคโนโลยีที่ระบบรู้จัก", "No known technology names found") }), el("p", { class: "note", text: L("ลองวางรายละเอียดงานที่มีชื่อเครื่องมือ เช่น React, Node.js, SQL, Git, Windows, IT Support", "Try a job description that names tools, e.g. React, Node.js, SQL, Git, Windows, IT Support") }));
+    return;
+  }
+  const ok = req.filter((k) => have.has(k)), part = req.filter((k) => !have.has(k) && learning.has(k)), miss = req.filter((k) => !have.has(k) && !learning.has(k));
+  const pct = Math.round(100 * (ok.length + part.length * 0.5) / req.length);
+  const verdict = pct >= 70 ? L("ตรงกับตำแหน่งนี้มาก", "A strong match for this role") : pct >= 40 ? L("ตรงบางส่วน", "A partial match") : L("ยังไม่ค่อยตรงกับตำแหน่งนี้", "Not a close match yet");
+  if (currentRole) out.append(el("p", { class: "note", style: "margin:0 0 8px", text: L("เทียบกับอาชีพ: ", "Compared with role: ") + currentRole.label }));
+  const ring = el("div", { class: "ring", style: "--p:" + pct, role: "img", "aria-label": L("ตรงกัน " + pct + " เปอร์เซ็นต์", "Match " + pct + " percent") }, el("span", { text: pct + "%" }));
+  out.append(el("div", { class: "res-top" }, ring, el("div", null, el("p", { class: "verdict", text: verdict }),
+    el("p", { class: "note", style: "margin-top:2px", text: L("พบ " + req.length + " เทคโนโลยีในข้อความ ตรงกับทักษะของ " + first + " " + ok.length + " รายการ" + (part.length ? " และกำลังเรียนรู้อีก " + part.length + " รายการ" : ""), "Found " + req.length + " technologies in the text; " + ok.length + " match " + first + "'s skills" + (part.length ? " and " + part.length + " more are being learned" : "")) }))));
+  if (ok.length) out.append(el("h4", { text: L("ตรงกับทักษะที่มี", "Matches existing skills") }), el("ul", { class: "chips" }, ok.map((k) => el("li", { class: "chip ok", text: k }))));
+  if (part.length) out.append(el("h4", { text: L("กำลังเรียนรู้ (นับครึ่งคะแนน)", "Currently learning (counts as half)") }), el("ul", { class: "chips" }, part.map((k) => el("li", { class: "chip", text: k }))));
+  if (miss.length) out.append(el("h4", { text: L("ยังไม่มีในรายการทักษะ", "Not in the skills list") }), el("ul", { class: "chips" }, miss.map((k) => el("li", { class: "chip miss", text: k }))));
+  const rel = relatedProjects(ok).slice(0, 3);
+  const isIT = ok.includes("IT Support") || ok.includes("Windows");
+  if (isIT) out.append(el("h4", { text: L("ประสบการณ์ที่เกี่ยวข้อง", "Related experience") }), el("p", { class: "note", text: P.work[0].title + " · " + P.work[0].org + " (" + P.work[0].when.split(" · ")[0] + ")" }));
+  if (rel.length) {
+    const box = el("div", { class: "sug", style: "display:flex;flex-wrap:wrap;gap:8px" });
+    rel.forEach((p) => { const b = el("button", { class: "sugb", type: "button", text: p.title }); b.addEventListener("click", () => openProject(p)); box.append(b); });
+    out.append(el("h4", { text: L("โปรเจกต์ที่เกี่ยวข้อง", "Related projects") }), box);
+  }
+}
+function jdPlaceholder() { $("jd").placeholder = L("วางรายละเอียดงาน (Job Description) จากประกาศรับสมัครที่นี่ เช่น ต้องการผู้ที่ใช้ React, Node.js, SQL และ Git ได้", "Paste the job description from a job posting here, e.g. looking for someone who can use React, Node.js, SQL and Git"); }
+jdPlaceholder();
+let jdTimer; $("jd").addEventListener("input", () => { jdKind = "custom"; setRole(null); clearTimeout(jdTimer); jdTimer = setTimeout(runMatch, 400); });
+$("jd").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runMatch(); } });
+$("jdRun").addEventListener("click", runMatch);
+$("jdEx").addEventListener("click", () => { $("jd").value = EXAMPLE_JD(); jdKind = "ex"; setRole(null); runMatch(); });
+$("jdClear").addEventListener("click", () => { jdKind = "custom"; setRole(null); $("jd").value = ""; runMatch(); $("jd").focus(); });
+runMatch();
+
+// ---------- Education, certificates, contact ----------
+const entry = (x) => el("div", { class: "entry" }, el("span", { class: "when", text: x.when }),
+  el("h4", null, x.title, x.sample ? el("span", { class: "badge", text: L("ตัวอย่าง", "Sample") }) : null), el("p", { text: x.org }), x.points ? el("ul", null, x.points.map((t) => el("li", { text: t }))) : null);
+function renderBackground() {
+  ["workList", "eduList", "certList"].forEach((id) => { $(id).textContent = ""; });
+  P.work.forEach((x) => $("workList").append(entry(x)));
+  P.education.forEach((x) => $("eduList").append(entry(x)));
+  P.certs.forEach((x) => $("certList").append(entry(x)));
+}
+renderBackground();
+function copyText(value, node, btn, label) {
+  const done = (t) => { btn.textContent = t; setTimeout(() => (btn.textContent = label), 1800); };
+  (navigator.clipboard ? navigator.clipboard.writeText(value) : Promise.reject()).then(() => done(L("คัดลอกแล้ว", "Copied")), () => {
+    const r = document.createRange(); r.selectNodeContents(node); const s = getSelection(); s.removeAllRanges(); s.addRange(r); done(L("เลือกข้อความแล้ว", "Selected"));
+  });
+}
+function contactItem(label, value) {
+  const val = el("span", { class: "val", text: value });
+  const btn = el("button", { class: "btn sm", type: "button", text: L("คัดลอก", "Copy") });
+  btn.addEventListener("click", () => copyText(value, val, btn, L("คัดลอก", "Copy")));
+  return el("div", { class: "panel glow" }, el("span", { class: "lbl", text: label }), val, btn);
+}
+function renderContact() { $("contactList").textContent = ""; $("contactList").append(contactItem("Email", P.email), contactItem("Phone", P.phone), el("div", { class: "panel glow" }, el("span", { class: "lbl", text: "Location" }), el("span", { class: "val", text: P.location }))); }
+renderContact();
+$("foot").textContent = "© 2026 " + P.name + " (" + P.nameTh + "). All rights reserved.";
+
+// ---------- AI assistant ----------
+const chat = $("chat"), msgs = $("msgs"), chatIn = $("chatIn");
+function renderChatStatic() {
+  $("chatSub").textContent = L("ถามเกี่ยวกับ ", "Ask about ") + first;
+  $("chatFoot").textContent = P.aiEndpoint ? L("ตอบด้วย AI จากข้อมูลบนหน้านี้ อาจคลาดเคลื่อนได้", "Answers by AI from the information on this page; may contain errors") : L("ตอบจากข้อมูลบนหน้านี้ ทำงานในเบราว์เซอร์ของคุณ", "Answers come from this page and run in your browser");
+}
+renderChatStatic();
+function projectButtons(list) {
+  const box = el("div", { class: "sug" });
+  list.forEach((p) => { const b = el("button", { class: "sugb", type: "button", text: p.title }); b.addEventListener("click", () => openProject(p)); box.append(b); });
+  return box;
+}
+function addMsg(who, text, projects) {
+  const m = el("div", { class: "msg " + who }, el("p", { text }));
+  if (projects && projects.length) m.append(projectButtons(projects));
+  msgs.append(m); msgs.scrollTop = msgs.scrollHeight; return m;
+}
+function localAnswer(raw) {
+  const s = raw.toLowerCase().trim();
+  const any = (a) => a.some((k) => s.includes(k));
+  const mail = P.email + (P.phone ? L(" หรือโทร ", " or call ") + P.phone : "");
+  if (s.length <= 14 && any(["สวัสดี", "หวัดดี", "hello", "hi", "hey"])) return { text: L("สวัสดีครับ ถามเรื่องทักษะ โปรเจกต์ การศึกษา หรือวิธีติดต่อ " + first + " ได้เลย", "Hello! Ask about " + first + "'s skills, projects, education, or how to get in touch.") };
+  if (any(["ติดต่อ", "อีเมล", "เมล", "email", "เบอร์", "โทร", "contact", "phone", "reach"])) return { text: L("ติดต่อ " + first + " ได้ที่อีเมล " + mail, "You can contact " + first + " at " + mail) };
+  if (any(["จ้าง", "รับงาน", "สหกิจ", "hire", "hiring", "ร่วมงาน", "work with"])) return { text: L("ถ้าสนใจร่วมงานหรือรับเข้าฝึกงาน ส่งรายละเอียดมาที่ " + mail + " หรือวางรายละเอียดงานในส่วน AI Job Match เพื่อดูว่าทักษะตรงแค่ไหน", "If you would like to work together or offer an internship, send the details to " + mail + " or paste the job description into AI Job Match to see how well the skills fit.") };
+  if (any(["การศึกษา", "มหาวิทยาลัย", "มหาลัย", "สาขา", "education", "gpax", "โรงเรียน", "ศรีปทุม", "เรียนอะไร", "เรียนที่", "study", "university", "school", "major"])) return { text: L(first + " เรียน " + P.education[0].title + " ที่" + P.education[0].org + " (" + P.education[0].when + ")", first + " studies " + P.education[0].title + " at " + P.education[0].org + " (" + P.education[0].when + ")") };
+  if (any(["ใบรับรอง", "certificate", "อบรม", "cert"])) { const c = P.certs.filter((x) => !x.sample); return { text: c.length ? L("ใบรับรอง: ", "Certificates: ") + c.map((x) => x.title + " (" + x.org + ")").join(", ") : L("ตอนนี้ยังไม่มีใบรับรองที่แสดงบนหน้านี้", "There are no certificates listed on this page yet.") }; }
+  if (any(["ประสบการณ์", "experience", "ทำงานมากี่ปี", "ฝึกงาน", "internship", "intern", "it support", "ยาซากิ", "yazaki"])) return { text: L("ประสบการณ์ของ " + first + ": " + P.experience + " (" + P.work[0].title + " ที่" + P.work[0].org + ") ผลงานหลักคือโปรเจกต์ " + P.projects.map((p) => p.title).join(", "), first + "'s experience: " + P.experience + " (" + P.work[0].title + " at " + P.work[0].org + "). Main work: " + P.projects.map((p) => p.title).join(", ")) };
+  const asked = detect(s), askHave = asked.filter((k) => have.has(k)), askMiss = asked.filter((k) => !have.has(k));
+  const scored = P.projects.map((p) => ({ p, n: p.tech.concat(p.tags || []).filter((t) => s.includes(t.toLowerCase())).length })).filter((x) => x.n > 0).sort((a, b) => b.n - a.n);
+  if (asked.length || scored.length) {
+    const projs = (scored.length ? scored.map((x) => x.p) : relatedProjects(askHave)).slice(0, 3);
+    let t = "";
+    if (askHave.length) t += L(first + " ใช้ " + askHave.join(", ") + " ได้ ", first + " can use " + askHave.join(", ") + ". ");
+    if (askMiss.length) t += L("ส่วน " + askMiss.join(", ") + " ยังไม่มีในรายการทักษะ ", askMiss.join(", ") + " is not in the skills list yet. ");
+    t += projs.length ? L("โปรเจกต์ที่เกี่ยวข้องคือ:", "Related projects:") : L("ยังไม่มีโปรเจกต์ที่ตรงกับเรื่องนี้โดยตรง", "There is no project that matches this directly.");
+    return { text: t.trim(), projects: projs };
+  }
+  if (any(["ทักษะ", "skill", "เก่ง", "ถนัด", "stack", "เทคโนโลยี", "เครื่องมือ", "tool", "ทำอะไรได้", "good at"])) return { text: L(first + " ถนัด " + P.bars.map((b) => b[0].split(" (")[0] + " " + b[1] + "%").join(", ") + " เทคโนโลยีหลักคือ " + P.stack.map((x) => x[0]).join(", "), first + " is strongest in " + P.bars.map((b) => b[0].split(" (")[0] + " " + b[1] + "%").join(", ") + ". Main technologies: " + P.stack.map((x) => x[0]).join(", ")) };
+  if (any(["โปรเจกต์", "ผลงาน", "project", "portfolio", "งานที่ทำ", "work"])) return { text: L("ผลงานของ " + first + " มี " + P.projects.length + " ชิ้น กดดูรายละเอียดได้เลย:", first + " has " + P.projects.length + " projects. Click one for details:"), projects: P.projects };
+  if (any(["ใคร", "who", "แนะนำ", "about", "ตัวเอง", "yourself"])) return { text: P.name + " (" + P.nameTh + ") " + P.role + ". " + P.about };
+  return { text: L("ผมตอบได้เฉพาะข้อมูลบนหน้านี้ ลองถามเรื่องทักษะ โปรเจกต์ การศึกษา หรือวิธีติดต่อ หรือบอกว่าอยากได้งานแบบไหน เช่น เว็บที่มีระบบสมาชิก", "I can only answer from the information on this page. Try asking about skills, projects, education or contact details, or describe the work you need, e.g. a site with user accounts.") };
+}
+function buildContext() {
+  return JSON.stringify({
+    name: P.name, nameTh: P.nameTh, role: P.role, about: P.about, location: P.location, experience: P.experience, email: P.email,
+    skills: P.bars, stack: P.stack.map((x) => x[0]), tools: P.otherTools.map((x) => x[0]),
+    projects: P.projects.map((p) => ({ title: p.title, description: p.desc, features: p.features, tech: p.tech })),
+    work: P.work, education: P.education, certificates: P.certs.filter((x) => !x.sample)
+  }).slice(0, 4000);
+}
+async function aiAnswer(question) {
+  if (!P.aiEndpoint) { await new Promise((r) => setTimeout(r, 350)); return localAnswer(question); }
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
+  try {
+    const r = await fetch(P.aiEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question, lang: LANG, context: buildContext() }), signal: ctl.signal });
+    if (!r.ok) throw new Error("bad status");
+    const j = await r.json();
+    if (!j.answer) throw new Error("empty");
+    const projs = P.projects.filter((p) => j.answer.toLowerCase().includes(p.title.toLowerCase()));
+    return { text: j.answer, projects: projs };
+  } catch (e) { return localAnswer(question); } finally { clearTimeout(timer); }
+}
+async function ask(question) {
+  const text = question.trim(); if (!text) return;
+  addMsg("user", text);
+  const wait = addMsg("bot", L("กำลังคิด…", "Thinking…"));
+  const res = await aiAnswer(text);
+  wait.remove(); addMsg("bot", res.text, res.projects);
+}
+let greetEl = null;
+const greeting = () => L("สวัสดีครับ ผมเป็นผู้ช่วยของ " + first + " ถามเรื่องทักษะ โปรเจกต์ หรือวิธีติดต่อได้เลย หรือบอกว่าอยากได้งานแบบไหน ผมจะแนะนำโปรเจกต์ที่ตรงที่สุดให้", "Hi! I am " + first + "'s assistant. Ask about skills, projects or how to get in touch, or tell me what kind of work you need and I will suggest the best-fitting project.");
+function toggleChat(open) {
+  const on = open === undefined ? chat.hidden : open;
+  chat.hidden = !on; $("fab").setAttribute("aria-expanded", String(on));
+  if (on) { if (!msgs.children.length) greetEl = addMsg("bot", greeting()); chatIn.focus(); }
+}
+function renderQuick() {
+  $("quick").textContent = "";
+  L(["มีโปรเจกต์อะไรบ้าง", "เก่งอะไรบ้าง", "อยากได้เว็บที่มีระบบสมาชิก", "ติดต่อยังไง"], ["What projects are there?", "What are the skills?", "I need a site with user accounts", "How can I contact you?"]).forEach((t) => {
+    const b = el("button", { class: "sugb", type: "button", text: t }); b.addEventListener("click", () => ask(t)); $("quick").append(b);
+  });
+}
+renderQuick();
+$("fab").addEventListener("click", () => toggleChat());
+$("chatX").addEventListener("click", () => { toggleChat(false); $("fab").focus(); });
+$("chatForm").addEventListener("submit", (e) => { e.preventDefault(); const v = chatIn.value; chatIn.value = ""; ask(v); });
+chat.addEventListener("keydown", (e) => { if (e.key === "Escape") { toggleChat(false); $("fab").focus(); } });
+
+// ---------- Command palette ----------
+const pal = $("pal"), palIn = $("palIn"), palList = $("palList");
+const go = (id) => () => document.querySelector(id).scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+const getCommands = () => {
+  const goT = L("ไปที่", "Go to");
+  return [
+    ["Home", goT, go("#top")], ["About", goT, go("#about")], ["Projects", goT, go("#projects")], ["Skills", goT, go("#skills")],
+    ["AI Job Match", goT, go("#match")], ["Experience", goT, go("#experience")], ["Education", goT, go("#background")], ["Contact", goT, go("#contact")],
+    [L("ถามผู้ช่วย AI", "Ask the AI assistant"), "AI", () => toggleChat(true)],
+    [L("สลับโหมดสี สว่าง/มืด", "Toggle light/dark mode"), L("ธีม", "Theme"), () => $("themeBtn").click()],
+    [L("สลับภาษา ไทย/อังกฤษ", "Switch language TH/EN"), L("ภาษา", "Language"), () => $("langBtn").click()],
+    [L("คัดลอกอีเมล", "Copy email"), L("คัดลอก", "Copy"), () => { try { navigator.clipboard.writeText(P.email); } catch (e) {} }]
+  ].concat(P.github ? [[L("เปิด GitHub", "Open GitHub"), L("ลิงก์", "Link"), () => window.open(P.github, "_blank", "noopener")]] : [])
+   .concat(P.projects.map((p) => [L("โปรเจกต์: ", "Project: ") + p.title, L("ผลงาน", "Work"), () => openProject(p)]));
+};
+let palSel = 0, palItems = [];
+function renderPal() {
+  const f = palIn.value.toLowerCase().trim();
+  palItems = getCommands().filter((c) => !f || (c[0] + " " + c[1]).toLowerCase().includes(f));
+  palSel = Math.min(palSel, Math.max(0, palItems.length - 1));
+  palList.textContent = "";
+  palItems.forEach((c, i) => {
+    const li = el("li", { role: "option", class: i === palSel ? "on" : "" }, el("span", { text: c[0] }), el("small", { text: c[1] }));
+    li.addEventListener("click", () => runPal(i)); palList.append(li);
+  });
+  if (!palItems.length) palList.append(el("li", { text: L("ไม่พบคำสั่งที่ตรงกัน", "No matching command") }));
+}
+function runPal(i) { const c = palItems[i]; if (!c) return; closeDlg(pal); setTimeout(c[2], 60); }
+function openPal() { palIn.value = ""; palSel = 0; renderPal(); openDlg(pal); palIn.focus(); }
+$("palBtn").addEventListener("click", openPal);
+palIn.addEventListener("input", () => { palSel = 0; renderPal(); });
+palIn.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown") { e.preventDefault(); palSel = (palSel + 1) % palItems.length; renderPal(); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); palSel = (palSel - 1 + palItems.length) % palItems.length; renderPal(); }
+  else if (e.key === "Enter") { e.preventDefault(); runPal(palSel); }
+});
+pal.addEventListener("click", (e) => { if (e.target === pal) closeDlg(pal); });
+addEventListener("keydown", (e) => {
+  const typing = /^(INPUT|TEXTAREA)$/.test((e.target.tagName || ""));
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPal(); }
+  else if (e.key === "/" && !typing && !pal.open) { e.preventDefault(); openPal(); }
+});
+
+// ---------- Scroll: progress + active menu + card glow ----------
+const links = Array.from(document.querySelectorAll("#menu a"));
+const targets = links.map((a) => document.querySelector(a.getAttribute("href")));
+function onScroll() {
+  let cur = 0;
+  targets.forEach((t, i) => { if (t && t.getBoundingClientRect().top < window.innerHeight * 0.35) cur = i; });
+  links.forEach((a, i) => a.classList.toggle("on", i === cur));
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  $("prog").style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + "%";
+}
+addEventListener("scroll", onScroll, { passive: true }); onScroll();
+document.addEventListener("pointermove", (e) => {
+  const g = e.target.closest && e.target.closest(".glow");
+  if (g) { const r = g.getBoundingClientRect(); g.style.setProperty("--mx", (e.clientX - r.left) + "px"); g.style.setProperty("--my", (e.clientY - r.top) + "px"); }
+});
+
+// ---------- Theme ----------
+try { const t = localStorage.getItem("theme"); if (t === "dark" || t === "light") root.dataset.theme = t; } catch (e) {}
+$("themeBtn").addEventListener("click", () => {
+  const lamp = $("themeBtn"); lamp.classList.remove("pull"); void lamp.offsetWidth; lamp.classList.add("pull");
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : !matchMedia("(prefers-color-scheme: light)").matches;
+  const next = dark ? "light" : "dark";
+  root.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch (e) {}
+});
+$("themeBtn").addEventListener("animationend", (e) => { if (e.animationName === "lampSwing") $("themeBtn").classList.remove("pull"); });
+
+// ---------- Language switch ----------
+function setLang(l) {
+  if (l === LANG) return;
+  LANG = l; try { localStorage.setItem("lang", l); } catch (e) {}
+  applyData(); applyStatic();
+  renderHero(); renderAbout(); renderProjects(); renderSkills(); renderBackground(); renderContact();
+  renderQuick(); renderChatStatic(); jdPlaceholder();
+  if (jdKind === "role" && currentRole) $("jd").value = roleText(currentRole); else if (jdKind === "ex") $("jd").value = EXAMPLE_JD();
+  runMatch();
+  if (greetEl && msgs.contains(greetEl) && msgs.children.length === 1) greetEl.firstChild.textContent = greeting();
+  if (pal.open) renderPal();
+  const rp = $("introReplay"); if (rp) rp.textContent = L("▶ ดูอินโทรอีกครั้ง", "▶ Replay intro");
+}
+applyStatic();
+$("langBtn").addEventListener("click", () => setLang(LANG === "th" ? "en" : "th"));
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ===== หุ่นยนต์ 3 มิติ (Three.js) ===== */
+(function () {
+  const box = document.getElementById("robot");
+  if (!box || !window.THREE) return;               // โหลด Three.js ไม่ได้ = ซ่อนหุ่นยนต์ หน้าเว็บยังใช้งานปกติ
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  box.prepend(renderer.domElement);
+  box.dataset.ready = "1";
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+  camera.position.set(0, 0.7, 7.2); camera.lookAt(0, 0.45, 0);
+
+  const accent = new THREE.Color("#2EE6A6");
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(3, 4, 5); scene.add(key);
+  const rim = new THREE.PointLight(accent, 1.4, 12); rim.position.set(-3, 1.5, 2.5); scene.add(rim);
+
+  const shell = new THREE.MeshStandardMaterial({ color: 0xcfdcda, metalness: 0.35, roughness: 0.4 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x0b1415, metalness: 0.6, roughness: 0.25 });
+  const joint = new THREE.MeshStandardMaterial({ color: 0x5b6f6d, metalness: 0.5, roughness: 0.5 });
+  const glow = new THREE.MeshStandardMaterial({ color: accent, emissive: accent, emissiveIntensity: 1.6 });
+  const M = (geo, mat, x, y, z, parent) => { const m = new THREE.Mesh(geo, mat); m.position.set(x || 0, y || 0, z || 0); (parent || robot).add(m); return m; };
+
+  const robot = new THREE.Group(); scene.add(robot);
+  // ลำตัว
+  M(new THREE.BoxGeometry(1.15, 1.15, 0.8), shell, 0, 0, 0);
+  M(new THREE.BoxGeometry(0.55, 0.28, 0.03), glow, 0, 0.1, 0.415);
+  M(new THREE.BoxGeometry(0.55, 0.06, 0.03), dark, 0, -0.18, 0.415);
+  M(new THREE.CylinderGeometry(0.22, 0.28, 0.2, 20), joint, 0, 0.65, 0);
+  // หัว
+  const head = new THREE.Group(); head.position.y = 1.3; robot.add(head);
+  M(new THREE.BoxGeometry(1.1, 0.85, 0.85), shell, 0, 0, 0, head);
+  M(new THREE.BoxGeometry(0.88, 0.45, 0.05), dark, 0, 0.02, 0.44, head);
+  const eyeL = M(new THREE.BoxGeometry(0.17, 0.17, 0.03), glow, -0.2, 0.02, 0.48, head);
+  const eyeR = M(new THREE.BoxGeometry(0.17, 0.17, 0.03), glow, 0.2, 0.02, 0.48, head);
+  [-1, 1].forEach((s) => { const e = M(new THREE.CylinderGeometry(0.14, 0.14, 0.12, 20), joint, s * 0.6, 0, 0, head); e.rotation.z = Math.PI / 2; });
+  M(new THREE.CylinderGeometry(0.035, 0.035, 0.32, 10), joint, 0, 0.58, 0, head);
+  const tip = M(new THREE.SphereGeometry(0.1, 20, 20), glow, 0, 0.8, 0, head);
+  // แขน
+  function arm(side) {
+    const g = new THREE.Group(); g.position.set(side * 0.82, 0.4, 0); robot.add(g);
+    M(new THREE.SphereGeometry(0.17, 16, 16), joint, 0, 0, 0, g);
+    M(new THREE.CylinderGeometry(0.11, 0.11, 0.75, 16), shell, 0, -0.42, 0, g);
+    M(new THREE.SphereGeometry(0.15, 16, 16), glow, 0, -0.85, 0, g);
+    g.rotation.z = side * 0.18; return g;
+  }
+  const armL = arm(-1), armR = arm(1);
+  // ฐานลอยตัว
+  const base = M(new THREE.CylinderGeometry(0.42, 0.2, 0.28, 24), joint, 0, -0.75, 0);
+  const ring = M(new THREE.TorusGeometry(0.34, 0.03, 10, 32), glow, 0, -0.93, 0); ring.rotation.x = Math.PI / 2;
+  const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.7, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.3 }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = -1.75; scene.add(shadow);
+
+  // เมาส์ / การสัมผัส
+  const mouse = { x: 0, y: 0 };
+  addEventListener("pointermove", (e) => {
+    const r = box.getBoundingClientRect();
+    mouse.x = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (innerWidth * 0.5)));
+    mouse.y = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (innerHeight * 0.5)));
+  }, { passive: true });
+
+  let wave = 0;
+  const bubble = document.getElementById("robotBubble");
+  function poke() {
+    wave = 1.4; if (bubble) bubble.style.opacity = "0";
+    setTimeout(() => { if (typeof toggleChat === "function") toggleChat(true); }, 700);
+  }
+  box.addEventListener("click", poke);
+  box.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); poke(); } });
+  setTimeout(() => { if (bubble) bubble.style.opacity = "0"; }, 9000);
+
+  function resize() {
+    const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(box); resize();
+
+  // สีตามธีม (ตามตัวแปร --accent)
+  function syncColor() {
+    const c = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+    if (c) { accent.set(c); glow.color.copy(accent); glow.emissive.copy(accent); rim.color.copy(accent); }
+  }
+  syncColor();
+
+  let visible = true, frame = 0, last = performance.now(), t = 0, blink = 0, nextBlink = 2.5;
+  new IntersectionObserver((en) => { visible = en[0].isIntersecting; }).observe(box);
+  function tick(now) {
+    requestAnimationFrame(tick);
+    if (!visible) { last = now; return; }
+    const dt = Math.min((now - last) / 1000, 0.05); last = now; frame++;
+    if (frame % 30 === 0) syncColor();
+    if (!still) t += dt;
+    const k = 1 - Math.pow(0.001, dt);                    // ความนุ่มนวลของการหันตามเมาส์
+    robot.position.y = Math.sin(t * 1.7) * 0.1;
+    shadow.scale.setScalar(1 - Math.sin(t * 1.7) * 0.06);
+    const ty = still ? 0 : mouse.x * 0.7, tx = still ? 0 : mouse.y * 0.35;
+    head.rotation.y += (ty - head.rotation.y) * k;
+    head.rotation.x += (tx - head.rotation.x) * k;
+    robot.rotation.y += (ty * 0.35 - robot.rotation.y) * k;
+    armL.rotation.x = Math.sin(t * 1.7 + 1) * 0.08;
+    if (wave > 0) { wave = Math.max(0, wave - dt); armR.rotation.z = 2.3 + Math.sin(t * 14) * 0.35; }
+    else armR.rotation.z += (0.18 - armR.rotation.z) * k;
+    tip.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
+    ring.material.emissiveIntensity = 1.3 + Math.sin(t * 3) * 0.4;
+    nextBlink -= dt;
+    if (nextBlink <= 0) { blink = 0.14; nextBlink = 2.5 + Math.random() * 3; }
+    if (blink > 0) blink -= dt;
+    eyeL.scale.y = eyeR.scale.y = blink > 0 ? 0.1 : 1;
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+/* ===== อินโทร 3 มิติ: หุ่นยนต์ถือคอมพิวเตอร์ ก่อนเข้าเว็บ (Three.js) ===== */
+(function () {
+  if (!window.THREE || matchMedia("(prefers-reduced-motion: reduce)").matches) return;   // ไม่มี Three.js หรือผู้ใช้ปิดแอนิเมชัน = ข้ามอินโทร
+  const NAME = (typeof PROFILE !== "undefined" && PROFILE.name) || "Narabadee Soonjan";
+    const DURATION = 9;            // วินาที ก่อนเข้าเว็บอัตโนมัติ
+  const ease = (x) => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+  const easeIO = (x) => { x = Math.min(Math.max(x, 0), 1); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+  let running = false;
+
+  function play() {
+    if (running) return;
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { return; }
+    running = true;
+    const SUB = (typeof P !== "undefined" && P.role) || "";
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+
+    // ---------- โครง HTML ----------
+    const ov = document.createElement("div");
+    ov.id = "intro"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", L("หน้าอินโทร", "Intro"));
+    ov.innerHTML = '<div class="it"><p class="hi"></p><h1></h1><p class="sub"></p></div>' +
+      '<button class="enter" type="button">' + L("เข้าสู่เว็บไซต์ →", "Enter website →") + '</button><button class="skip" type="button">' + L("ข้ามอินโทร", "Skip intro") + '</button><div class="bar"><i></i></div>';
+    ov.prepend(renderer.domElement);
+    document.body.append(ov);
+    const hi = ov.querySelector(".hi"), h1 = ov.querySelector("h1"), sub = ov.querySelector(".sub");
+    const enterBtn = ov.querySelector(".enter"), skipBtn = ov.querySelector(".skip"), barI = ov.querySelector(".bar i");
+    document.documentElement.style.overflow = "hidden";
+
+    // ---------- ฉาก 3 มิติ ----------
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 60);
+    const accent = new THREE.Color("#2EE6A6");
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(3, 5, 6); scene.add(key);
+    const rim = new THREE.PointLight(accent, 1.6, 14); rim.position.set(-3.5, 1.5, 3); scene.add(rim);
+
+    const shell = new THREE.MeshStandardMaterial({ color: 0xcfdcda, metalness: 0.35, roughness: 0.4 });
+    const dark = new THREE.MeshStandardMaterial({ color: 0x0b1415, metalness: 0.6, roughness: 0.25 });
+    const joint = new THREE.MeshStandardMaterial({ color: 0x5b6f6d, metalness: 0.5, roughness: 0.5 });
+    const glow = new THREE.MeshStandardMaterial({ color: accent, emissive: accent, emissiveIntensity: 1.6 });
+    const body = new THREE.MeshStandardMaterial({ color: 0x24373a, metalness: 0.5, roughness: 0.45 });
+    const robot = new THREE.Group(); scene.add(robot);
+    const M = (geo, mat, x, y, z, parent) => { const m = new THREE.Mesh(geo, mat); m.position.set(x || 0, y || 0, z || 0); (parent || robot).add(m); return m; };
+
+    M(new THREE.BoxGeometry(1.15, 1.15, 0.8), shell, 0, 0, 0);
+    M(new THREE.BoxGeometry(0.55, 0.28, 0.03), glow, 0, 0.1, 0.415);
+    M(new THREE.CylinderGeometry(0.22, 0.28, 0.2, 20), joint, 0, 0.65, 0);
+    const head = new THREE.Group(); head.position.y = 1.3; robot.add(head);
+    M(new THREE.BoxGeometry(1.1, 0.85, 0.85), shell, 0, 0, 0, head);
+    M(new THREE.BoxGeometry(0.88, 0.45, 0.05), dark, 0, 0.02, 0.44, head);
+    const eyeL = M(new THREE.BoxGeometry(0.17, 0.17, 0.03), glow, -0.2, 0.02, 0.48, head);
+    const eyeR = M(new THREE.BoxGeometry(0.17, 0.17, 0.03), glow, 0.2, 0.02, 0.48, head);
+    [-1, 1].forEach((s) => { const e = M(new THREE.CylinderGeometry(0.14, 0.14, 0.12, 20), joint, s * 0.6, 0, 0, head); e.rotation.z = Math.PI / 2; });
+    M(new THREE.CylinderGeometry(0.035, 0.035, 0.32, 10), joint, 0, 0.58, 0, head);
+    const tip = M(new THREE.SphereGeometry(0.1, 20, 20), glow, 0, 0.8, 0, head);
+    // แขนทั้งสองยื่นไปข้างหน้าเพื่อถือคอมพิวเตอร์
+    function arm(side) {
+      const g = new THREE.Group(); g.position.set(side * 0.82, 0.4, 0); robot.add(g);
+      M(new THREE.SphereGeometry(0.17, 16, 16), joint, 0, 0, 0, g);
+      M(new THREE.CylinderGeometry(0.11, 0.11, 0.75, 16), shell, 0, -0.42, 0, g);
+      M(new THREE.SphereGeometry(0.15, 16, 16), glow, 0, -0.85, 0, g);
+      g.rotation.x = -1.1; g.rotation.z = side * 0.05; return g;
+    }
+    const armL = arm(-1), armR = arm(1);
+    M(new THREE.CylinderGeometry(0.42, 0.2, 0.28, 24), joint, 0, -0.75, 0);
+    const ring = M(new THREE.TorusGeometry(0.34, 0.03, 10, 32), glow, 0, -0.93, 0); ring.rotation.x = Math.PI / 2;
+
+    // คอมพิวเตอร์: ฐาน + ฝาที่เปิดได้ (หน้าจอหันเข้าหาผู้ชม)
+    const laptop = new THREE.Group(); laptop.position.set(0, -0.15, 1.22); robot.add(laptop);
+    M(new THREE.BoxGeometry(1.4, 0.07, 1.0), body, 0, 0, 0, laptop);
+    M(new THREE.BoxGeometry(1.1, 0.01, 0.4), dark, 0, 0.04, 0.12, laptop);
+    const lid = new THREE.Group(); lid.position.set(0, 0.04, -0.5); laptop.add(lid);
+    M(new THREE.BoxGeometry(1.4, 0.05, 0.98), body, 0, 0.02, 0.49, lid);
+    const sc = document.createElement("canvas"); sc.width = 512; sc.height = 340;
+    const sx = sc.getContext("2d");
+    const tex = new THREE.CanvasTexture(sc);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.86), new THREE.MeshBasicMaterial({ map: tex }));
+    scr.rotation.x = Math.PI / 2; scr.position.set(0, -0.012, 0.49); lid.add(scr);
+    const glowPl = new THREE.PointLight(accent, 0, 4); glowPl.position.set(0, 0.6, 1.8); laptop.add(glowPl);
+
+    const LINES = [[0, .5, "c"], [1, .72, "k"], [1, .4, "s"], [2, .6, "c"], [1, .85, "k"], [2, .5, "s"], [2, .66, "c"], [0, .3, "k"], [1, .78, "c"], [2, .45, "s"], [2, .7, "k"], [0, .25, "c"]];
+    let shownLines = -1;
+    function drawScreen(n) {
+      if (n === shownLines) return; shownLines = n;
+      const css = getComputedStyle(document.documentElement);
+      const a = css.getPropertyValue("--accent").trim() || "#2EE6A6", k = css.getPropertyValue("--c-key").trim() || "#6EC1FF", b = css.getPropertyValue("--c-bool").trim() || "#FFB86B";
+      sx.fillStyle = "#0C1617"; sx.fillRect(0, 0, 512, 340);
+      sx.fillStyle = "#16282A"; sx.fillRect(0, 0, 512, 30);
+      ["#ff6b6b", "#ffd166", a].forEach((c, i) => { sx.fillStyle = c; sx.beginPath(); sx.arc(18 + i * 18, 15, 5, 0, 6.3); sx.fill(); });
+      sx.fillStyle = "#8FA6A3"; sx.font = "14px monospace"; sx.fillText("portfolio.js", 90, 20);
+      for (let i = 0; i < Math.min(n, LINES.length); i++) {
+        const L = LINES[i]; sx.fillStyle = L[2] === "c" ? a : L[2] === "k" ? k : b;
+        sx.fillRect(24 + L[0] * 28, 50 + i * 22, Math.round(L[1] * 380), 10);
+      }
+      if (n >= 0 && n < LINES.length + 2 && Math.floor(performance.now() / 400) % 2) { sx.fillStyle = a; sx.fillRect(24, 50 + Math.max(0, Math.min(n, LINES.length)) * 22, 8, 12); }
+      tex.needsUpdate = true;
+    }
+    drawScreen(0);
+
+    // ---------- ปรับขนาด / กล้อง ----------
+    function resize() {
+      const w = ov.clientWidth || innerWidth, h = ov.clientHeight || innerHeight;
+      renderer.setSize(w, h, false); camera.aspect = w / h;
+      const portrait = camera.aspect < 0.8;
+      camera.position.set(0, portrait ? 1.3 : 1.1, portrait ? 13 : 9.2);
+      camera.lookAt(0, portrait ? 0.9 : 0.75, 0); camera.updateProjectionMatrix();
+    }
+    resize(); addEventListener("resize", resize);
+
+    // ---------- ไทม์ไลน์ ----------
+    const typeTo = (node, text, p) => { node.textContent = text.slice(0, Math.round(text.length * Math.min(Math.max(p, 0), 1))); };
+    let t = 0, last = performance.now(), raf = 0, closed = false, blink = 0, nextBlink = 3;
+    const mouse = { x: 0, y: 0 };
+    const onMove = (e) => { mouse.x = (e.clientX / innerWidth) * 2 - 1; mouse.y = (e.clientY / innerHeight) * 2 - 1; };
+    addEventListener("pointermove", onMove, { passive: true });
+
+    function tick(now) {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min((now - last) / 1000, 0.05); last = now; t += dt;
+      // 1) หุ่นยนต์บินเข้ามา
+      const f = ease(t / 1.5);
+      robot.position.y = -4.2 * (1 - f) + Math.sin(t * 1.7) * 0.09 * f;
+      robot.rotation.y = (1 - f) * -1.4 + Math.sin(t * 0.8) * 0.08 * f;
+      robot.scale.setScalar(0.65 + 0.35 * f);
+      // 2) เปิดฝาคอมพิวเตอร์
+      lid.rotation.x = -1.75 * easeIO((t - 1.4) / 1.3);
+      glowPl.intensity = 1.6 * easeIO((t - 2.2) / 0.8);
+      drawScreen(t < 2.0 ? 0 : Math.floor((t - 2.0) * 5));
+      // 3) ข้อความ
+      typeTo(hi, "Hi, I'm", (t - 2.4) / 0.5);
+      typeTo(h1, NAME, (t - 2.9) / 1.2);
+      typeTo(sub, SUB, (t - 4.2) / 1.0);
+      if (t > 4.6) enterBtn.classList.add("show");
+      // หัวหันตามเมาส์ กะพริบตา เสาอากาศกะพริบ
+      head.rotation.y += (mouse.x * 0.5 - head.rotation.y) * 0.08;
+      head.rotation.x += (mouse.y * 0.25 - head.rotation.x) * 0.08;
+      armL.rotation.x = -1.1 + Math.sin(t * 1.7) * 0.02; armR.rotation.x = -1.1 + Math.sin(t * 1.7 + 1) * 0.02;
+      tip.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
+      ring.material.emissiveIntensity = 1.3 + Math.sin(t * 3) * 0.4;
+      nextBlink -= dt; if (nextBlink <= 0) { blink = 0.14; nextBlink = 2.5 + Math.random() * 2.5; }
+      if (blink > 0) blink -= dt; eyeL.scale.y = eyeR.scale.y = blink > 0 ? 0.1 : 1;
+      // แถบเวลา + เข้าเว็บอัตโนมัติ
+      barI.style.width = Math.min(100, (t / DURATION) * 100) + "%";
+      renderer.render(scene, camera);
+      if (t >= DURATION) close();
+    }
+
+    function close() {
+      if (closed) return; closed = true;
+      ov.classList.add("out");
+      removeEventListener("pointermove", onMove); removeEventListener("resize", resize); removeEventListener("keydown", onKey);
+      setTimeout(() => {
+        cancelAnimationFrame(raf); renderer.dispose(); ov.remove();
+        document.documentElement.style.overflow = ""; running = false;
+        const top = document.getElementById("top"); if (top && top.scrollIntoView) top.scrollIntoView();
+      }, 600);
+    }
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    addEventListener("keydown", onKey);
+    enterBtn.addEventListener("click", close); skipBtn.addEventListener("click", close);
+    skipBtn.focus();
+    raf = requestAnimationFrame(tick);
+  }
+
+  play();
+  // ปุ่มดูอินโทรซ้ำที่ท้ายหน้า
+  const foot = document.querySelector("footer");
+  if (foot) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "ibtn"; b.id = "introReplay"; b.textContent = L("▶ ดูอินโทรอีกครั้ง", "▶ Replay intro");
+    b.addEventListener("click", () => { scrollTo(0, 0); play(); });
+    foot.append(b);
+  }
+})();
+</script>
